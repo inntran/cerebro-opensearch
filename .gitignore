@@ -1,0 +1,33 @@
+# Ignore all dotfiles...
+.*
+# except for .gitignore and GitHub workflows
+!.gitignore
+!.eslintrc.json
+!.github
+
+# Ignore Play! working directory #
+db
+eclipse
+log
+logs
+modules
+precompiled
+project/project
+project/target
+target
+tmp
+test-result
+server.pid
+*.iml
+*.eml
+activator-*.sbt
+node_modules
+cerebro.db
+data/
+frontend/node_modules/
+frontend/dist/
+
+# Python research helpers
+__pycache__/
+*.pyc
+*.rpm

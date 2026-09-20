@@ -1,0 +1,50 @@
+name: container
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-push:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Image tags
+        id: tags
+        run: |
+          SHA_SHORT="${GITHUB_SHA::7}"
+          TAGS="commit-${SHA_SHORT}"
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+            TAGS="${TAGS} ${VERSION} latest"
+            if [[ "${VERSION}" == *.* ]]; then
+              TAGS="${TAGS} ${VERSION%.*}"
+            fi
+          fi
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+          echo "Building tags: ${TAGS}"
+
+      - name: Build and push to GHCR
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAGS: ${{ steps.tags.outputs.tags }}
+        run: |
+          set -euo pipefail
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
+          LOCAL_IMAGE="localhost/cerebro-opensearch:release"
+          podman --version
+          buildah --version
+          podman build -t "$LOCAL_IMAGE" -f Containerfile .
+          printf '%s' "$GHCR_TOKEN" | podman login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          for tag in $TAGS; do
+            REF="$IMAGE:$tag"
+            podman tag "$LOCAL_IMAGE" "$REF"
+            podman push --digestfile /tmp/cerebro-image-digest "$REF"
+            echo "Pushed $REF ($(</tmp/cerebro-image-digest))" >> "$GITHUB_STEP_SUMMARY"
+          done
