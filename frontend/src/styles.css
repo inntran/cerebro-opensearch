@@ -9,3 +9,83 @@ pre {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+.overview-matrix {
+  width: max-content;
+  min-width: 100%;
+  table-layout: fixed;
+}
+.overview-matrix th,
+.overview-matrix td {
+  padding: 0.4rem;
+  min-width: 180px;
+  vertical-align: top;
+}
+.overview-matrix .overview-node-cell {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 190px;
+  background: #fff;
+}
+.overview-matrix thead .overview-node-cell {
+  z-index: 2;
+}
+.overview-index-cell {
+  width: 220px;
+}
+.overview-title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 190px;
+}
+.overview-closed {
+  background: #e9ecef !important;
+}
+.overview-actions summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.overview-shard {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: 2px;
+  padding: 0;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+  background: transparent;
+  font-size: 12px;
+  line-height: 1;
+  vertical-align: middle;
+}
+.overview-shard:disabled {
+  opacity: 0.4;
+}
+.overview-shard-replica {
+  border-style: dashed;
+}
+.overview-shard-selected {
+  outline: 2px solid #212529;
+  outline-offset: 1px;
+}
+.overview-shard-started {
+  color: #07865e;
+}
+.overview-shard-initializing {
+  color: #087fa7;
+}
+.overview-shard-relocated,
+.overview-shard-relocating {
+  color: #7953d2;
+}
+.overview-shard-recovering {
+  color: #987d00;
+}
+.overview-shard-unassigned {
+  color: #6c757d;
+}

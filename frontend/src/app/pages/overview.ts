@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, effect } from '@angular/core';
-import { DecimalPipe, JsonPipe } from '@angular/common';
+import { DecimalPipe, JsonPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Alerts } from '../shared/alerts';
@@ -53,7 +53,7 @@ interface OverviewData {
 
 @Component({
   selector: 'app-overview',
-  imports: [FormsModule, DecimalPipe, JsonPipe],
+  imports: [FormsModule, DecimalPipe, JsonPipe, NgClass],
   template: `
     <section class="py-3">
       <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
@@ -160,95 +160,173 @@ interface OverviewData {
             </button>
           }
         </div>
-        <div class="table-responsive">
-          <table class="table table-sm table-striped align-middle">
+        <div class="table-responsive overview-matrix-scroll">
+          <table class="table table-bordered align-middle overview-matrix">
             <thead>
               <tr>
-                <th><span class="visually-hidden">Select</span></th>
-                <th>Index</th>
-                <th>Aliases</th>
-                <th>Shards</th>
-                <th>Documents</th>
-                <th>Size</th>
-                <th>Actions</th>
+                <th scope="col" class="overview-node-cell">Node / index</th>
+                @for (index of visibleIndices(); track index.name) {
+                  <th
+                    scope="col"
+                    class="overview-index-cell"
+                    [class.overview-closed]="index.closed"
+                  >
+                    <div class="d-flex align-items-start gap-2">
+                      <input
+                        type="checkbox"
+                        class="form-check-input mt-1"
+                        [checked]="selected.has(index.name)"
+                        (change)="toggle(index.name)"
+                        [attr.aria-label]="'Select ' + index.name"
+                      />
+                      <div class="min-width-0">
+                        <strong class="overview-title" [title]="index.name">{{
+                          index.name
+                        }}</strong>
+                        @if (index.aliases.length) {
+                          <small
+                            class="overview-title text-muted"
+                            [title]="index.aliases.join(', ')"
+                          >
+                            {{ index.aliases[0] }}
+                            @if (index.aliases.length > 1) {
+                              (+{{ index.aliases.length - 1 }})
+                            }
+                          </small>
+                        }
+                      </div>
+                    </div>
+                    @if (index.closed) {
+                      <small>Index closed</small>
+                    } @else {
+                      <small class="d-block"
+                        >{{ index.num_shards }} × {{ index.num_replicas + 1 }} shards ·
+                        {{ index.doc_count | number }} docs ·
+                        {{ formatBytes(index.size_in_bytes) }}</small
+                      >
+                    }
+                    <details class="overview-actions mt-1">
+                      <summary>Actions</summary>
+                      <div class="d-flex flex-wrap gap-1 mt-1">
+                        <button
+                          class="btn btn-outline-secondary btn-sm"
+                          (click)="details('commons/get_index_settings', { index: index.name })"
+                        >
+                          Settings
+                        </button>
+                        <button
+                          class="btn btn-outline-secondary btn-sm"
+                          (click)="details('commons/get_index_mapping', { index: index.name })"
+                        >
+                          Mapping
+                        </button>
+                        <button
+                          class="btn btn-outline-secondary btn-sm"
+                          (click)="details('commons/get_index_stats', { index: index.name })"
+                        >
+                          Stats
+                        </button>
+                        <button
+                          class="btn btn-outline-primary btn-sm"
+                          (click)="indexSettings(index.name)"
+                        >
+                          Edit
+                        </button>
+                        @for (action of actions; track action.path) {
+                          <button
+                            class="btn btn-outline-secondary btn-sm"
+                            (click)="run(action.path, index.name, action.label)"
+                          >
+                            {{ action.label }}
+                          </button>
+                        }
+                      </div>
+                    </details>
+                  </th>
+                }
               </tr>
             </thead>
             <tbody>
-              @for (index of visibleIndices(); track index.name) {
-                <tr [class.table-warning]="index.unhealthy" [class.text-muted]="index.closed">
-                  <td>
-                    <input
-                      type="checkbox"
-                      [checked]="selected.has(index.name)"
-                      (change)="toggle(index.name)"
-                      [attr.aria-label]="'Select ' + index.name"
-                    />
-                  </td>
-                  <td>
-                    <strong>{{ index.name }}</strong>
-                  </td>
-                  <td>{{ index.aliases.join(', ') }}</td>
-                  <td>{{ index.num_shards }} × {{ index.num_replicas + 1 }}</td>
-                  <td>{{ index.doc_count | number }}</td>
-                  <td>{{ formatBytes(index.size_in_bytes) }}</td>
-                  <td>
-                    <div class="d-flex flex-wrap gap-1">
-                      <button
-                        class="btn btn-outline-secondary btn-sm"
-                        (click)="details('commons/get_index_settings', { index: index.name })"
-                      >
-                        Settings
-                      </button>
-                      <button
-                        class="btn btn-outline-secondary btn-sm"
-                        (click)="details('commons/get_index_mapping', { index: index.name })"
-                      >
-                        Mapping
-                      </button>
-                      <button
-                        class="btn btn-outline-secondary btn-sm"
-                        (click)="details('commons/get_index_stats', { index: index.name })"
-                      >
-                        Stats
-                      </button>
-                      <button
-                        class="btn btn-outline-primary btn-sm"
-                        (click)="indexSettings(index.name)"
-                      >
-                        Edit
-                      </button>
-                      @for (action of actions; track action.path) {
-                        <button
-                          class="btn btn-outline-secondary btn-sm"
-                          (click)="run(action.path, index.name, action.label)"
+              @if (
+                cluster.unassigned_shards ||
+                cluster.relocating_shards ||
+                cluster.initializing_shards
+              ) {
+                <tr>
+                  <th scope="row" class="overview-node-cell">
+                    Unassigned / changing
+                    <small class="d-block text-muted"
+                      >{{ cluster.unassigned_shards }} unassigned ·
+                      {{ cluster.relocating_shards }} relocating ·
+                      {{ cluster.initializing_shards }} initializing</small
+                    >
+                  </th>
+                  @for (index of visibleIndices(); track index.name) {
+                    <td [class.overview-closed]="index.closed">
+                      @for (shard of index.shards['unassigned'] || []; track $index) {
+                        <span
+                          class="overview-shard overview-shard-unassigned"
+                          [title]="'Shard ' + shard.shard + ': unassigned'"
+                          >{{ shard.shard }}</span
                         >
-                          {{ action.label }}
+                      }
+                    </td>
+                  }
+                </tr>
+              }
+              @for (node of visibleNodes(); track node.id) {
+                <tr>
+                  <th scope="row" class="overview-node-cell">
+                    <button
+                      class="btn btn-link p-0 text-start fw-semibold"
+                      (click)="details('commons/get_node_stats', { node: node.id })"
+                    >
+                      {{ node.name }}
+                    </button>
+                    @if (node.current_master) {
+                      <span title="Current master"> ★</span>
+                    }
+                    <small class="d-block text-muted">{{ node.host }}</small>
+                  </th>
+                  @for (index of visibleIndices(); track index.name) {
+                    <td [class.overview-closed]="index.closed">
+                      @for (shard of index.shards[node.id] || []; track $index) {
+                        <button
+                          type="button"
+                          class="overview-shard"
+                          [class.overview-shard-replica]="!shard.primary"
+                          [class.overview-shard-selected]="
+                            selectedShard?.index === shard.index &&
+                            selectedShard?.shard === shard.shard &&
+                            selectedShard?.node === node.id
+                          "
+                          [ngClass]="shardClass(shard.state)"
+                          [disabled]="index.closed"
+                          [title]="
+                            'Shard ' +
+                            shard.shard +
+                            (shard.primary ? ' primary' : ' replica') +
+                            ': ' +
+                            shard.state +
+                            ' on ' +
+                            node.name
+                          "
+                          [attr.aria-label]="
+                            'Select shard ' +
+                            shard.shard +
+                            ' of ' +
+                            index.name +
+                            ' on ' +
+                            node.name +
+                            ' for relocation'
+                          "
+                          (click)="selectShard(shard, node.id)"
+                        >
+                          {{ shard.shard }}
                         </button>
                       }
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td colspan="6">
-                    <small
-                      >Shards:
-                      @for (node of cluster.nodes; track node.id) {
-                        @for (shard of index.shards[node.id] || []; track $index) {
-                          <button
-                            class="badge text-bg-secondary border-0 me-1"
-                            [title]="node.name + ': ' + shard.state"
-                            (click)="selectShard(shard, node.id)"
-                          >
-                            {{ shard.shard }}{{ shard.primary ? 'p' : 'r' }} · {{ node.name }}
-                          </button>
-                        }
-                      }
-                      @for (shard of index.shards['unassigned'] || []; track $index) {
-                        <span class="badge text-bg-danger me-1">{{ shard.shard }} unassigned</span>
-                      }
-                    </small>
-                  </td>
+                    </td>
+                  }
                 </tr>
               }
             </tbody>
@@ -271,27 +349,6 @@ interface OverviewData {
             </div>
           </div>
         }
-        <h2 class="h4 mt-4">Nodes</h2>
-        <div class="row g-2">
-          @for (node of visibleNodes(); track node.id) {
-            <div class="col-lg-3 col-md-4">
-              <div class="card card-body">
-                <strong
-                  >{{ node.name }}
-                  @if (node.current_master) {
-                    ★
-                  }</strong
-                ><small>{{ node.host }}</small
-                ><button
-                  class="btn btn-link p-0 text-start"
-                  (click)="details('commons/get_node_stats', { node: node.id })"
-                >
-                  View stats
-                </button>
-              </div>
-            </div>
-          }
-        </div>
       }
       @if (info !== undefined) {
         <div class="card mt-3">
@@ -370,6 +427,9 @@ export class Overview {
     return (this.data?.nodes || []).filter((node) =>
       node.name.toLowerCase().includes(this.nodeFilter.toLowerCase()),
     );
+  }
+  shardClass(state: string) {
+    return `overview-shard-${state.toLowerCase()}`;
   }
   toggle(name: string) {
     this.selected.has(name) ? this.selected.delete(name) : this.selected.add(name);

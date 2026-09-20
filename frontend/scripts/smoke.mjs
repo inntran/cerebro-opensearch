@@ -161,6 +161,10 @@ try {
   }
 
   await visit('overview', 'Overview');
+  assert.equal(await page.locator('.overview-matrix thead th').count(), 2);
+  assert.equal(await page.locator('.overview-matrix tbody tr').count(), 1);
+  assert.equal(await page.locator('.overview-matrix tbody .overview-shard-started').count(), 1);
+  assert.match(await page.locator('.overview-matrix tbody th').first().innerText(), /node-one/);
   await page.getByRole('checkbox', { name: 'Select test' }).check();
   await page.getByRole('button', { name: 'Delete', exact: true }).first().click();
   assert.ok(called('/overview/delete_indices'));
