@@ -1,15 +1,15 @@
-// Check tracked text files without requiring a separate formatter or linter.
+// Check project text files without requiring a separate formatter or linter.
 const fs = require('fs');
 const path = require('path');
 
-// These are third-party assets copied into the repository.
+// Kept for migration reference; these bundled third-party assets are not built.
 const vendorFiles = new Set([
   'public/js/lib.js',
   'public/fonts/fontawesome-webfont.svg',
 ]);
 
 const ignoredDirectories = new Set([
-  '.git', '.agents', '.codex', 'node_modules', 'target', 'data', 'logs',
+  '.git', '.agents', '.codex', 'node_modules', 'target', 'data', 'logs', 'dist', 'angular', 'new',
 ]);
 function* filesIn(directory = '.') {
   for (const entry of fs.readdirSync(directory, {withFileTypes: true})) {

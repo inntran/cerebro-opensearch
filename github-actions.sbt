@@ -24,17 +24,17 @@ ThisBuild / githubWorkflowBuildPreamble := Seq(
     params = Map(
       "node-version" -> "24",
       "cache" -> "npm",
-      "cache-dependency-path" -> "package-lock.json"
+      "cache-dependency-path" -> "frontend/package-lock.json"
     )
   ),
   Run(
     List(
-      "npm ci --ignore-scripts",
+      "npm --prefix frontend ci --ignore-scripts",
       "npm run lint",
-      "node -e \"require('grunt').tasks(['assets'])\"",
-      "npm test -- --singleRunTests"
+      "npm test",
+      "npm run smoke"
     ),
-    name = Some("Angular assets")
+    name = Some("Angular frontend")
   )
 )
 

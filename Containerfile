@@ -8,18 +8,17 @@ ARG NODE_BUILDER_IMAGE=docker.io/library/node:24-alpine
 ARG BUILDER_IMAGE=docker.io/sbtscala/scala-sbt:eclipse-temurin-25_1.x
 ARG RUNTIME_IMAGE=registry.access.redhat.com/hi/openjdk:latest-runtime
 
-# ── retained AngularJS assets (Grunt → /public/css and /public/js) ────────────
+# ── Angular frontend ──────────────────────────────────────────────────────────
 FROM ${NODE_BUILDER_IMAGE} AS frontend
 
 USER node
 WORKDIR /home/node/build
 
-COPY --chown=node:node package.json package-lock.json ./
-RUN npm ci --ignore-scripts --no-audit --no-fund
+COPY --chown=node:node frontend/package.json frontend/package-lock.json ./frontend/
+RUN cd frontend && npm ci --no-audit --no-fund
 
-COPY --chown=node:node Gruntfile.js ./
-COPY --chown=node:node src/ ./src/
-RUN node -e "require('grunt').tasks(['assets'])"
+COPY --chown=node:node frontend/ ./frontend/
+RUN cd frontend && npm run build
 
 # ── JVM application stage ────────────────────────────────────────────────────
 FROM ${BUILDER_IMAGE} AS builder
@@ -29,9 +28,7 @@ WORKDIR /home/sbtuser/src
 
 COPY --chown=sbtuser:sbtuser . ./
 
-COPY --from=frontend --chown=sbtuser:sbtuser /home/node/build/public/css ./public/css
-COPY --from=frontend --chown=sbtuser:sbtuser /home/node/build/public/js ./public/js
-COPY --from=frontend --chown=sbtuser:sbtuser /home/node/build/public/fonts ./public/fonts
+COPY --from=frontend --chown=sbtuser:sbtuser /home/node/build/public/angular ./public/angular
 
 RUN sbt stage
 

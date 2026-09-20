@@ -1,0 +1,11 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+  background: #f7f8fa;
+}
+.with-navbar {
+  padding-top: 4.5rem;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

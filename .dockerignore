@@ -1,0 +1,10 @@
+.git
+node_modules
+frontend/node_modules
+frontend/dist
+public/angular
+public/new
+target
+project/target
+logs
+data

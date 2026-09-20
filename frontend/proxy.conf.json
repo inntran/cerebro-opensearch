@@ -1,0 +1,19 @@
+{
+  "/connect": {"target": "http://localhost:9000"},
+  "/navbar": {"target": "http://localhost:9000"},
+  "/overview": {"target": "http://localhost:9000"},
+  "/nodes": {"target": "http://localhost:9000"},
+  "/rest": {"target": "http://localhost:9000"},
+  "/aliases": {"target": "http://localhost:9000"},
+  "/analysis": {"target": "http://localhost:9000"},
+  "/templates": {"target": "http://localhost:9000"},
+  "/cluster_settings": {"target": "http://localhost:9000"},
+  "/index_settings": {"target": "http://localhost:9000"},
+  "/snapshots": {"target": "http://localhost:9000"},
+  "/repositories": {"target": "http://localhost:9000"},
+  "/cat": {"target": "http://localhost:9000"},
+  "/commons": {"target": "http://localhost:9000"},
+  "/create_index": {"target": "http://localhost:9000"},
+  "/auth": {"target": "http://localhost:9000"},
+  "/login": {"target": "http://localhost:9000"}
+}

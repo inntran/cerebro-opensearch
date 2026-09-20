@@ -2,8 +2,11 @@
 .*
 # except for .gitignore and GitHub workflows
 !.gitignore
+!.dockerignore
 !.eslintrc.json
 !.github
+!frontend/.editorconfig
+!frontend/.prettierrc
 
 # Ignore Play! working directory #
 db
@@ -26,6 +29,8 @@ cerebro.db
 data/
 frontend/node_modules/
 frontend/dist/
+public/new/
+public/angular/
 
 # Python research helpers
 __pycache__/

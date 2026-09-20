@@ -1,0 +1,84 @@
+<header
+  class="navbar navbar-expand-lg bg-body-tertiary border-bottom fixed-top"
+  [class.border-success]="clusterStatus === 'green'"
+  [class.border-warning]="clusterStatus === 'yellow'"
+  [class.border-danger]="clusterStatus === 'red'"
+  *ngIf="session.host()"
+>
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/overview">Cerebro</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      (click)="menuOpen = !menuOpen"
+      aria-label="Toggle navigation"
+      [attr.aria-expanded]="menuOpen"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <nav class="collapse navbar-collapse" [class.show]="menuOpen" aria-label="Main navigation">
+      <ul class="navbar-nav me-auto">
+        @for (item of links; track item.path) {
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              [routerLink]="item.path"
+              queryParamsHandling="preserve"
+              routerLinkActive="active"
+              (click)="menuOpen = false"
+              >{{ item.label }}</a
+            >
+          </li>
+        }
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-truncate" [title]="session.host()"
+          >{{ clusterName }} · {{ session.host() }} [{{ clusterStatus }}]</span
+        >
+        <select
+          class="form-select form-select-sm"
+          aria-label="Refresh interval"
+          [value]="refresh.interval()"
+          (change)="setInterval($event)"
+        >
+          @for (value of intervals; track value) {
+            <option [value]="value">{{ value / 1000 }}s</option>
+          }
+        </select>
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          type="button"
+          (click)="session.disconnect()"
+        >
+          Disconnect
+        </button>
+        <form action="/auth/logout" method="post" *ngIf="appUsername">
+          <button class="btn btn-outline-secondary btn-sm" type="submit">Sign out</button>
+        </form>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="container-fluid" [class.with-navbar]="session.host()">
+  @for (alert of alerts.items(); track alert.id) {
+    <div
+      class="alert alert-dismissible"
+      [class.alert-danger]="alert.kind === 'error'"
+      [class.alert-success]="alert.kind === 'success'"
+      [class.alert-info]="alert.kind === 'info'"
+      role="alert"
+    >
+      <strong>{{ alert.message }}</strong>
+      @if (alert.detail) {
+        <pre class="mb-0">{{ alert.detail | json }}</pre>
+      }
+      <button
+        class="btn-close"
+        type="button"
+        aria-label="Close"
+        (click)="alerts.remove(alert.id)"
+      ></button>
+    </div>
+  }
+  <router-outlet />
+</main>

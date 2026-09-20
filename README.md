@@ -1,6 +1,6 @@
 # Cerebro OpenSearch
 
-Cerebro OpenSearch is a web administration console for OpenSearch clusters. It keeps the Scala/Play backend and AngularJS frontend of the original Cerebro project while updating the backend, build, and deployment path. This repository starts with a clean history containing the application and its tests; the original project and its author remain credited below.
+Cerebro OpenSearch is a web administration console for OpenSearch clusters. It keeps the Scala/Play backend of the original Cerebro project and uses an Angular 22 frontend with Bootstrap 5 styles. The original project and its author remain credited below.
 
 ## What this version improves
 
@@ -8,9 +8,9 @@ Cerebro OpenSearch is a web administration console for OpenSearch clusters. It k
 - Adds strict HTTPS verification and optional custom CA or client certificate support for cluster connections.
 - Validates cluster URLs to reduce server-side request forgery risk, and keeps bookmarked hosts separate from credentials entered for a connection.
 - Creates a persistent session secret and SQLite data directory at startup, and offers optional audit logging for connections and mutations.
-- Preserves the cluster, index, node, alias, template, snapshot, and REST console workflows in the existing AngularJS UI.
+- Provides cluster, index, node, alias, template, snapshot, and REST console workflows in the Angular UI.
 
-These are implementation changes, not a claim that every OpenSearch release and feature has been validated. The smoke matrix exercises disposable OpenSearch `latest` and `2` images; exact supported version baselines require further testing. The AngularJS frontend is retained and remains a modernization task.
+These are implementation changes, not a claim that every OpenSearch release and feature has been validated. The smoke matrix exercises disposable OpenSearch `latest` and `2` images; exact supported version baselines require further testing. The previous AngularJS sources remain in the repository for migration reference but are not loaded by the application.
 
 ## Login and connection behavior
 
@@ -23,9 +23,10 @@ Application login is optional and uses the existing basic or LDAP configuration.
 Requires JDK 25, sbt 1.13, and Node 24 for frontend assets and browser tests.
 
 ```bash
-npm ci --ignore-scripts
-node -e "require('grunt').tasks(['assets'])"
-npm test -- --singleRunTests
+npm --prefix frontend ci --ignore-scripts
+npm run lint
+npm test
+npm run smoke
 sbt test stage
 mkdir -p data
 java -Dpidfile.path=/dev/null -Dhttp.port=9000 -Ddata.path="$PWD/data" \
