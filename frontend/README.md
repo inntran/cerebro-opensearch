@@ -2,6 +2,8 @@
 
 This is the supported Angular frontend for Cerebro OpenSearch. It uses Bootstrap 5 CSS and Angular components for interactive behavior. The Play backend remains the API and serves the production app at `/`.
 
+The [frontend migration record](../docs/frontend-migration.md) lists what changed, known differences from the earlier UI, and small follow-up steps.
+
 From the repository root:
 
 ```bash

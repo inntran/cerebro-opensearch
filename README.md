@@ -12,6 +12,8 @@ Cerebro OpenSearch is a web administration console for OpenSearch clusters. It k
 
 These are implementation changes, not a claim that every OpenSearch release and feature has been validated. The smoke matrix exercises disposable OpenSearch `latest` and `2` images; exact supported version baselines require further testing. The previous AngularJS sources remain in the repository for migration reference but are not loaded by the application.
 
+For the frontend changes, remaining differences from the earlier UI, and incremental follow-up work, see the [frontend migration record](docs/frontend-migration.md).
+
 ## Login and connection behavior
 
 Application login is optional and uses the existing basic or LDAP configuration. The connect page also accepts an OpenSearch URL and optional cluster username/password. These cluster credentials are used for that connection; saved host bookmarks contain addresses, not passwords. Application login and OpenSearch credentials are separate.
