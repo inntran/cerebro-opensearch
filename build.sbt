@@ -9,7 +9,7 @@ packageSummary := "OpenSearch / OpenSearch web admin tool"
 packageDescription := """cerebro-opensearch is an open source (MIT License) cluster web admin tool built
   using Scala, Play Framework and AngularJS."""
 
-version := "1.0.0-SNAPSHOT"
+version := "0.1.0"
 
 ThisBuild / javacOptions ++= Seq("--release", "25")
 ThisBuild / scalacOptions ++= Seq("-release", "25", "-deprecation", "-feature")
