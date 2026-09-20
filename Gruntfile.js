@@ -68,15 +68,6 @@ module.exports = function(grunt) {
         dest: 'public/css/app.css'
       },
     },
-    jshint: {
-      cerebro: {
-        src: [
-          'src/app/components/*/*.js',
-          'src/app/shared/*.js',
-          'src/app/shared/*/*.js'
-        ]
-      }
-    },
     karma: {
       unit: {configFile: 'tests/karma.config.js', singleRun: singleRunTests }
     },
@@ -95,7 +86,6 @@ module.exports = function(grunt) {
   });
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-karma');
