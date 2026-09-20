@@ -112,7 +112,7 @@ describe('OverviewController', function() {
         expect(this.scope.indices_filter.healthy).toEqual(true);
       }
     );
-    
+
     it('cleans state and alerts users if refreshing data fails',
       function() {
         this.OverviewDataService.getOverview = function(success, error) {

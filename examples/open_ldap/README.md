@@ -34,7 +34,7 @@ gidNumber: 14564100
 userPassword:: e1NTSEF9MVVKcENhTUJseXkyOXhuMllqK0VhZGFkSFZCUHhMNVg=
 mail: test@example.org
 gecos: test User
-``` 
+```
 
 ## Setting up cerebro
 
@@ -44,7 +44,7 @@ Based in what it's shown above, the environment variables that cerebro needs are
 - AUTH_TYPE=ldap
 - LDAP_METHOD=simple
 - LDAP_URL=ldap://ldap:389
-- LDAP_BASE_DN=DC=example,DC=org 
+- LDAP_BASE_DN=DC=example,DC=org
 - LDAP_USER_TEMPLATE=uid=%s,%s
 ```
 
@@ -52,5 +52,5 @@ Based in what it's shown above, the environment variables that cerebro needs are
 - `LDAP_BASE_DN`: It's the base DN where users belong to. In the example `test` users belong to `dc=example,dc=org`
 - `LDAP_USER_TEMPLATE`: Since it's weird to ask the user to input the full `dn` (`test` user is `uid=test,dc=example,dc=org`)
  cerebro uses a template. Typically it's expected that the user only types the username, in this case `test`. That's why
- it's configured with `uid=%s,%s`. This means that the final `dn` will be the result of replacing the first `%s` by the 
- user's input and the second with the `LDAP_BASE_DN`     
+ it's configured with `uid=%s,%s`. This means that the final `dn` will be the result of replacing the first `%s` by the
+ user's input and the second with the `LDAP_BASE_DN`

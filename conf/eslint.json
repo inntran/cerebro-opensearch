@@ -12,6 +12,7 @@
         "max-len": ["error", 120],
         "no-var": 0,
         "require-jsdoc": 0,
-        "no-throw-literal": 0
+        "no-throw-literal": 0,
+        "no-trailing-spaces": "error"
     }
 }

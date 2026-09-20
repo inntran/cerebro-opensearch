@@ -4,6 +4,9 @@
   "description": "cerebro - opensearch admin",
   "main": "index.html",
   "scripts": {
+    "lint": "npm run lint:js && npm run lint:whitespace",
+    "lint:js": "eslint -c conf/eslint.json 'src/app/**/*.js'",
+    "lint:whitespace": "node scripts/check-whitespace.js",
     "test": "grunt test"
   },
   "repository": {

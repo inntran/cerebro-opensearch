@@ -332,7 +332,7 @@ class HTTPOpenSearchClient @Inject()(client: WSClient) extends OpenSearchClient 
       case _: JsString => NdJsonContentType // if it's not a json, it is assumed that bulk or multi-search API is used
       case _ => JsonContentType
     }.toSeq
-    
+
     val body = data.map {
       case JsString(value) => value // needed to handle non valid json requests(multisearch, bulk...)
       case v: JsValue => v.toString

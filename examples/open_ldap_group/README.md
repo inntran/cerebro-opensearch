@@ -37,7 +37,7 @@ gidNumber: 14564100
 userPassword:: e1NTSEF9MVVKcENhTUJseXkyOXhuMllqK0VhZGFkSFZCUHhMNVg=
 mail: test@example.org
 gecos: test User
-``` 
+```
 
 And `cerebro` group looks like this:
 
@@ -51,7 +51,7 @@ uniqueMember: uid=test,ou=people,dc=example,dc=org
 
 ## Setting up cerebro
 
-In the context shown above, cerebro can test that the user has valid credentials and, also, check that the user belongs 
+In the context shown above, cerebro can test that the user has valid credentials and, also, check that the user belongs
 to the cerebro group.
 In order to do achieve that we need to use this environment variables:
 
@@ -78,12 +78,12 @@ are needed.
 - `LDAP_USER_ATTR`: name of the attribute that contains the unique identifier of the user. In the example: `uid`
 - `LDAP_USER_ATTR_TEMPLATE`: In this case, cerebro doesn't try to build a `dn`, it's trying to build the attribute is defined in `LDAP_USER_ATTR`.
  In the example when the `test` user tries to login, we need to use template `%s` because `uid`s in our ldap data base contains
-just a string with the username. If we use for example `mail` attribute (because uid doesn't exist and mail is how we identify 
-our users in our company), then this should be configured as `%s@example.org`.  
+just a string with the username. If we use for example `mail` attribute (because uid doesn't exist and mail is how we identify
+our users in our company), then this should be configured as `%s@example.org`.
 - `LDAP_GROUP`: Condition that test the membership of an user. In the example: `memberof=cn=cerebro,ou=groups,dc=example,dc=org`
 
 If group membership check keeps failing, we can take into consideration that cerebro performs the following query: `"(& ($LDAP_USER_ATTR:${_ouput_of_appliying_LDAP_USER_ATTR_TEMPLATE}})($LDAP_GROUP))"`.
-So according to the example it should look like `"(& (uid=test)(memberof=cn=cerebro,ou=groups,dc=example,dc=org))"` and this 
+So according to the example it should look like `"(& (uid=test)(memberof=cn=cerebro,ou=groups,dc=example,dc=org))"` and this
 can be tested with `ldapsearch` command as follows:
 
 ```
@@ -103,4 +103,4 @@ gidNumber: 14564100
 userPassword:: e1NTSEF9MVVKcENhTUJseXkyOXhuMllqK0VhZGFkSFZCUHhMNVg=
 mail: test@example.org
 gecos: test User
-```  
+```

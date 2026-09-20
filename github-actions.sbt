@@ -30,7 +30,7 @@ ThisBuild / githubWorkflowBuildPreamble := Seq(
   Run(
     List(
       "npm ci --ignore-scripts",
-      "node_modules/.bin/eslint -c conf/eslint.json 'src/app/**/*.js'",
+      "npm run lint",
       "node -e \"require('grunt').tasks(['assets'])\"",
       "npm test -- --singleRunTests"
     ),

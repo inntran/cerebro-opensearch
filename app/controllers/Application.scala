@@ -9,5 +9,5 @@ class Application @Inject()(val authentication: AuthenticationModule) extends In
   def index = AuthAction(authentication, true)(defaultExecutionContext) { request =>
     Ok(views.html.Index())
   }
-  
+
 }

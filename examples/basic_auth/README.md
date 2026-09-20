@@ -4,7 +4,7 @@
 
 When running cerebro's docker image the following environment variable must be set.
 
-- `AUTH_TYPE`: must be set to `basic`  
+- `AUTH_TYPE`: must be set to `basic`
 - `BASIC_AUTH_USER`
 - `BASIC_AUTH_PWD`
 
