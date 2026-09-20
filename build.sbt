@@ -1,4 +1,4 @@
-name := "cerebro"
+name := "cerebro-opensearch"
 
 organization := "io.github.inntran"
 
